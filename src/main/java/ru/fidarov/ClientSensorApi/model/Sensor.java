@@ -16,7 +16,7 @@ public class Sensor {
     private int id;
 
     @NotEmpty(message = "Sensor's name can't be empty")
-    @Size(min = 1,max = 250,message = "Amount of characters have to be between 0 and 250")
+    @Size(min = 3,max = 250,message = "Amount of characters have to be between 3 and 250")
     @Column(name = "name")
     private String name;
 

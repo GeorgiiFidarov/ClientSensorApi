@@ -8,4 +8,7 @@ import ru.fidarov.ClientSensorApi.model.Sensor;
 public interface SensorRepository extends JpaRepository<Sensor, Integer>
 {
 
+    void findByName(String name);
+
+    Sensor findSensorByName(String name);
 }

@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.fidarov.ClientSensorApi.model.Sensor;
 import ru.fidarov.ClientSensorApi.repositories.SensorRepository;
+import ru.fidarov.ClientSensorApi.util.SensorDeleteError;
 import ru.fidarov.ClientSensorApi.util.SensorNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +28,9 @@ public class SensorService {
     public Sensor getSensorById(int id){
         return sensorRepository.findById(id).orElseThrow(SensorNotFoundException::new);
     }
+    public Optional<Sensor> getName(String name){
+        return Optional.ofNullable(sensorRepository.findSensorByName(name));
+    }
 
     @Transactional
     public void save(Sensor sensor){
@@ -34,7 +39,10 @@ public class SensorService {
     }
     @Transactional
     public void delete(int id){
-        sensorRepository.deleteById(id);
+        if (sensorRepository.findById(id).isPresent()){
+            sensorRepository.deleteById(id);
+        }else
+            throw new SensorDeleteError();
     }
     private void enrichSensor(Sensor sensor){
         sensor.setCreated_at(LocalDateTime.now());

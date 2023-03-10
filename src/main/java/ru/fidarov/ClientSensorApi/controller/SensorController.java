@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.fidarov.ClientSensorApi.DTO.SensorDTO;
 import ru.fidarov.ClientSensorApi.model.Sensor;
 import ru.fidarov.ClientSensorApi.service.SensorService;
-import ru.fidarov.ClientSensorApi.util.SensorDeleteError;
-import ru.fidarov.ClientSensorApi.util.SensorErrorResponse;
-import ru.fidarov.ClientSensorApi.util.SensorNotCreatedException;
-import ru.fidarov.ClientSensorApi.util.SensorNotFoundException;
+import ru.fidarov.ClientSensorApi.util.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,12 +25,14 @@ public class SensorController {
 
     private final SensorService sensorService;
     private final ModelMapper modelMapper;
+    private final SensorValidator sensorValidator;
 
     @Autowired
     public SensorController(SensorService sensorService,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, SensorValidator sensorValidator) {
         this.sensorService = sensorService;
         this.modelMapper = modelMapper;
+        this.sensorValidator = sensorValidator;
     }
 
     //выдаёт по адресу /sensors все сенсоры в базе
@@ -44,13 +46,14 @@ public class SensorController {
         return convertToSensorDTO(sensorService.getSensorById(id));
     }
     @PostMapping("/delete/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable int id){
-        sensorService.delete(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+    public void delete(@PathVariable int id){
+        sensorService.delete(id);;
     }
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid SensorDTO sensorDTO,
                                              BindingResult bindingResult){
+        sensorValidator.validate(convertToSensor(sensorDTO), bindingResult);
+        System.out.println(bindingResult);
         if (bindingResult.hasErrors()){
             StringBuilder errorMessage = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -61,10 +64,18 @@ public class SensorController {
                         .append(error.getDefaultMessage())
                         .append(";");
             }
+            System.out.println(errorMessage);
             throw new SensorNotCreatedException(errorMessage.toString());
         }
         sensorService.save(convertToSensor(sensorDTO));
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+    @ExceptionHandler
+    private ResponseEntity<SensorErrorResponse> handleException(DoubleSensorNameError e){
+        SensorErrorResponse errorResponse = new SensorErrorResponse(
+                "Duplicate sensor name",System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler
     private ResponseEntity<SensorErrorResponse> handleException(SensorNotFoundException e){
@@ -89,11 +100,11 @@ public class SensorController {
         );
         return new ResponseEntity<>(sensorErrorResponse,HttpStatus.BAD_REQUEST);
     }
+
     private Sensor convertToSensor(SensorDTO sensorDTO){
         return modelMapper.map(sensorDTO,Sensor.class);
     }
     private SensorDTO convertToSensorDTO(Sensor sensor){
         return modelMapper.map(sensor, SensorDTO.class);
     }
-
 }
