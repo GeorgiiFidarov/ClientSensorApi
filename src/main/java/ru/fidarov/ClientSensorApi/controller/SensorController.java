@@ -6,17 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.fidarov.ClientSensorApi.DTO.SensorDTO;
+import ru.fidarov.ClientSensorApi.sensorExceptions.*;
 import ru.fidarov.ClientSensorApi.model.Sensor;
 import ru.fidarov.ClientSensorApi.service.SensorService;
-import ru.fidarov.ClientSensorApi.util.*;
+import ru.fidarov.ClientSensorApi.validation.SensorValidator;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,6 +24,7 @@ public class SensorController {
     private final SensorService sensorService;
     private final ModelMapper modelMapper;
     private final SensorValidator sensorValidator;
+    StringBuilder errorMessage = new StringBuilder();
 
     @Autowired
     public SensorController(SensorService sensorService,
@@ -47,15 +46,13 @@ public class SensorController {
     }
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable int id){
-        sensorService.delete(id);;
+        sensorService.delete(id);
     }
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid SensorDTO sensorDTO,
                                              BindingResult bindingResult){
         sensorValidator.validate(convertToSensor(sensorDTO), bindingResult);
-        System.out.println(bindingResult);
         if (bindingResult.hasErrors()){
-            StringBuilder errorMessage = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();
             for (FieldError error : errors){
                 errorMessage
@@ -87,7 +84,7 @@ public class SensorController {
     @ExceptionHandler
     private ResponseEntity<SensorErrorResponse> handleException(SensorNotCreatedException e){
         SensorErrorResponse errorResponse = new SensorErrorResponse(
-                e.getMessage(),
+                "Impossible to create sensor "+errorMessage,
                 System.currentTimeMillis()
         );
         return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);

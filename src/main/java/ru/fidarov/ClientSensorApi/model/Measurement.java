@@ -2,6 +2,10 @@ package ru.fidarov.ClientSensorApi.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="measurement")
 public class Measurement {
@@ -9,7 +13,6 @@ public class Measurement {
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotEmpty
     @Column(name = "value")
     private float value;
     @Column(name = "raining")
@@ -17,6 +20,8 @@ public class Measurement {
     @ManyToOne
     @JoinColumn(name="sensor",referencedColumnName = "name")
     private Sensor sensor;
+//    @Column(name = "current_time")
+//    private LocalDateTime current_time;
 
     public Measurement(){
 
@@ -27,6 +32,14 @@ public class Measurement {
         this.raining = raining;
         this.sensor = sensor;
     }
+
+//    public LocalDateTime getCurrent_time() {
+//        return current_time;
+//    }
+//
+//    public void setCurrent_time(LocalDateTime current_time) {
+//        this.current_time = current_time;
+//    }
 
     public float getValue() {
         return value;

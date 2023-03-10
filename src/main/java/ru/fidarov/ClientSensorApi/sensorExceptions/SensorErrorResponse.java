@@ -1,4 +1,4 @@
-package ru.fidarov.ClientSensorApi.util;
+package ru.fidarov.ClientSensorApi.sensorExceptions;
 
 public class SensorErrorResponse {
     private String message;

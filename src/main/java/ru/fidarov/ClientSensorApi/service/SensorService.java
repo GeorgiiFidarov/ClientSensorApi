@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.fidarov.ClientSensorApi.model.Sensor;
 import ru.fidarov.ClientSensorApi.repositories.SensorRepository;
-import ru.fidarov.ClientSensorApi.util.SensorDeleteError;
-import ru.fidarov.ClientSensorApi.util.SensorNotFoundException;
+import ru.fidarov.ClientSensorApi.sensorExceptions.SensorDeleteError;
+import ru.fidarov.ClientSensorApi.sensorExceptions.SensorNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
