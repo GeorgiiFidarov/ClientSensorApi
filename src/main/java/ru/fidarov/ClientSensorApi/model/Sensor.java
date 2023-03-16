@@ -1,15 +1,17 @@
 package ru.fidarov.ClientSensorApi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "Sensor")
-public class Sensor {
+public class Sensor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,16 +22,14 @@ public class Sensor {
     @Column(name = "name")
     private String name;
 
-    @NotEmpty
+    @OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Measurement> measurements;
+
     @Column(name = "created_at")
     private LocalDateTime created_at;
 
-    @NotEmpty
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
-
-    @OneToMany(mappedBy = "sensor")
-    private List<Measurement> measurements;
 
     public Sensor(){
 

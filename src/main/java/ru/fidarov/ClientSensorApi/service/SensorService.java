@@ -48,6 +48,4 @@ public class SensorService {
         sensor.setCreated_at(LocalDateTime.now());
         sensor.setUpdated_at(LocalDateTime.now());
     }
-
-
 }

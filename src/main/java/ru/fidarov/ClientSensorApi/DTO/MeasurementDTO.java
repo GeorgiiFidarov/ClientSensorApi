@@ -1,25 +1,22 @@
 package ru.fidarov.ClientSensorApi.DTO;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import ru.fidarov.ClientSensorApi.model.Sensor;
 
 public class MeasurementDTO {
-
     private float value;
 
     private boolean raining;
-    @ManyToOne
-    @JoinColumn(name="sensor",referencedColumnName = "name")
+
     private Sensor sensor;
 
-    public MeasurementDTO() {
+    public MeasurementDTO()
+    {
+
     }
 
-    public MeasurementDTO(float value, boolean raining, Sensor sensor) {
+    public MeasurementDTO(float value, boolean raining) {
         this.value = value;
         this.raining = raining;
-        this.sensor = sensor;
     }
 
     public float getValue() {
@@ -44,5 +41,14 @@ public class MeasurementDTO {
 
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
+    }
+
+    @Override
+    public String toString() {
+        return "MeasurementDTO{" +
+                "value=" + value +
+                ", raining=" + raining +
+                ", sensor=" + sensor +
+                '}';
     }
 }

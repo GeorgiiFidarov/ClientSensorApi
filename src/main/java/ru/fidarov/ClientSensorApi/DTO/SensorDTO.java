@@ -25,4 +25,10 @@ public class SensorDTO {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "SensorDTO{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
