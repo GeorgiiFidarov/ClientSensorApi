@@ -1,0 +1,86 @@
+Here is all REST API to work with client api.
+Client collects all data from RainSensor and registrates a new ones.
+------------------------------------------------
+Error for asking undefined sensor in database
+"There is no such sensor with this id registered"
+
+http://localhost:8080/sensors/1
+JSON response:
+{
+    "name": "Weather sensor"
+}
+
+http://localhost:8080/sensors
+JSON response:
+    {
+        {
+            "name": "Weather sensor"
+        },
+        {
+            "name": "Rain sensor"
+        },
+        }
+    }
+
+
+Error on deleting empty sensor
+"There is no such sensor to delete"
+
+http://localhost:8080/sensors/delete/5
+JSON response:
+ok
+
+
+The registration validates you sensor and also sets current_time of validation.
+If there is equal sensors found you get error
+"Duplicate error name"
+
+http://localhost:8080/sensors/registration
+JSON response:
+{
+    "name": "South polar sensor"
+}
+------------------------------------------------
+The way to add measurement from sensor, if there is no matching sensor you get error.
+"There is no such sensor registered"
+
+POST:https//localhost:8080/measurements/add
+JSON response:
+{
+    "value": 24.7,
+    "raining": true,
+    "sensor": {
+        "name": "Weather sensor"
+    }
+}
+GET: https//localhost:8080/measurements
+JSON response:
+[
+    {
+        "value": 24.7,
+        "raining": true,
+        "sensor": {
+            "name": "RainSensor",
+        }
+    },
+        {
+        "value": 24.7,
+        "raining": true,
+        "sensor": {
+            "name": "Weather Sensor LTD",
+        }
+    },
+
+]
+Shows the specific sensor by it's name
+GET: https//localhost:8080/measurements/{sensor' name}
+JSON response:
+[
+    {
+        "value": 24.7,
+        "raining": true,
+        "sensor": {
+            "name": "RainSensor",
+        }
+    }
+]
